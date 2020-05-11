@@ -1,60 +1,52 @@
 
-import React, {Component} from 'react'
+import React, {useEffect, useState} from 'react'
 import {View, StatusBar, StyleSheet, Image, Dimensions, TouchableOpacity, Button, FlatList} from 'react-native';
 import { Container, InputGroup, Input, Text, Button as NBButton } from 'native-base';
 import { NavBar } from '../components/NavBar';
 
 const url = 'https://api.unsplash.com/photos/?client_id=896d4f52c589547b2134bd75ed48742db637fa51810b49b607e37e46ab2c0043';
 
-export default class MainScreen extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            data: [],
-            searchText: '',
-            loading: false,
-            temp: [],
-        };
-    }
+export default function MainScreen({navigation}) {
 
-    async componentDidMount() {
-        this.setState({loading: true});
-        await fetch(url)
-            .then(response => response.json())
-            .then(result => {
-                console.log('QQQ result', result);
-                this.setState({data: result, loading: false, temp: result})})
-            .catch(error => {
-                this.setState({error, loading: false});
-            });
-    }
+    const fetchTodos = async (url) => {
+        const response = await fetch(url);
+        const data = await response.json();
 
-    onSearchNameTextChange = (value) => {
-        this.setState({searchText: value});
-
-        const newData = this.state.data.filter(item => {
-            const itemData = item.user.first_name ? item.user.first_name.toUpperCase() : ''.toUpperCase();
-            const textData = value.toUpperCase();
-            return itemData.indexOf(textData) > -1;
-        });
-        this.setState({data: newData, value: value})
-        if(value === '') {
-            this.setState({data: [...this.state.temp]}
-            )}
+        return data
     };
+    const [dataSource, setDataSource] = useState();
 
-    renderItem = (item, sectionID, rowID) => {
-        const {navigate} = this.props.navigation;
+    useEffect(() => {
+        fetchTodos(url).then((data) => setDataSource(data));
+        console.log('dataSource', dataSource)
+    }, []);
+
+    // onSearchNameTextChange = (value) => {
+    //     this.setState({searchText: value});
+    //
+    //     const newData = this.state.data.filter(item => {
+    //         const itemData = item.user.first_name ? item.user.first_name.toUpperCase() : ''.toUpperCase();
+    //         const textData = value.toUpperCase();
+    //         return itemData.indexOf(textData) > -1;
+    //     });
+    //     this.setState({data: newData, value: value})
+    //     if(value === '') {
+    //         this.setState({data: [...this.state.temp]}
+    //         )}
+    // };
+
+    const renderItem = (item, sectionID, rowID) => {
+        // const {navigate} = this.props.navigation;
         return (
             <View style={{paddingHorizontal: 20,}}>
-                <TouchableOpacity onPress={() => navigate('DetailScreen')} style={{
+                <TouchableOpacity style={{
                     paddingTop: 10,
                     borderBottomWidth: 1, borderColor: '#868b9b',
                 }}
-                                  key={ rowID}>
+                                  key={rowID}>
                     <View style={{flexDirection: 'row'}}>
                         <View>
-                            <TouchableOpacity onPress={() => {}}>
+                            <TouchableOpacity>
                                 <Image
                                     source={{uri: `${item.user.profile_image.large}`}}
                                     style={styles.imageStyle}
@@ -64,7 +56,11 @@ export default class MainScreen extends Component {
 
                         <View style={{flexDirection: 'column', flex: 43, marginLeft: 30, justifyContent: 'center'}}>
                             <TouchableOpacity>
-                                <Text style={{lineHeight: 25,  color: '#212529', fontSize: 18}}>{item.user.first_name}</Text>
+                                <Text style={{
+                                    lineHeight: 25,
+                                    color: '#212529',
+                                    fontSize: 18
+                                }}>{item.user.first_name}</Text>
                                 <Text style={{
                                     color: '#7f7f7f',
                                     fontSize: 17,
@@ -73,20 +69,18 @@ export default class MainScreen extends Component {
                             </TouchableOpacity>
                         </View>
 
-                        <View style={{flex: 25,
+                        <View style={{
+                            flex: 25,
                             alignItems: 'flex-end',
                             justifyContent: 'center'
                         }}>
                             <Button
                                 title='Click' color='#b5b5b5'
-
                                 onPress={() => {
-                                    /*  Navigate to the DetailsScreen route with params */
-                                    navigate('DetailScreen', {
+                                    navigation.navigate('DetailScreen', {
                                         first_name: item.user.first_name,
                                         last_name: item.user.last_name,
                                         image: item.user.profile_image.large,
-                                        alt_description: item.alt_description
                                     });
                                 }}
                             />
@@ -96,8 +90,6 @@ export default class MainScreen extends Component {
             </View>
         )
     };
-
-    render() {
         return (
             <Container style={{
                 backgroundColor: 'white',
@@ -112,28 +104,21 @@ export default class MainScreen extends Component {
                 }}>
                     <InputGroup style={{marginTop: 6, marginBottom: 10}} borderType='regular'>
                         <Input
-                            style={{
-                                borderWidth: 1,
-                                paddingLeft: 10,
-                                paddingBottom: 5,
-                                borderRadius: 5,
-                                borderColor: '#c9c9c9',
-                                height: 40,
-                            }}
+                            style={styles.inputStyle}
                             borderType='regular'
-                            value={this.state.searchText}
+                            // value={searchText}
                             autoCapitalize="none"
                             autoCorrect={false}
-                            onChangeText={(val) => this.onSearchNameTextChange(val) }
+                            // onChangeText={onSearchNameTextChange}
                             placeholder='Search by name'/>
                     </InputGroup>
                 </View>
 
                 <View style={{flex: 1}}>
                     <FlatList
-                        data={this.state.data}
+                        data={dataSource}
                         keyExtractor={(item, index) => item.id}
-                        renderItem={ (row, sectionID, rowID) => this.renderItem(row.item, sectionID, rowID) }
+                        renderItem={ (row, sectionID, rowID) => renderItem(row.item, sectionID, rowID) }
                     />
                 </View>
 
@@ -154,8 +139,7 @@ export default class MainScreen extends Component {
                     </NBButton>
                 </View>
             </Container>
-        );
-    }
+        )
 }
 MainScreen.navigationOptions = {
     headerTitle: false
@@ -169,6 +153,14 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         borderWidth: 1,
         borderColor: '#fff',
+    },
+    inputStyle: {
+        borderWidth: 1,
+        paddingLeft: 10,
+        paddingBottom: 5,
+        borderRadius: 5,
+        borderColor: '#c9c9c9',
+        height: 40,
     }
 });
 
