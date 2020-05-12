@@ -11,14 +11,15 @@ export default function MainScreen({navigation}) {
     const fetchTodos = async (url) => {
         const response = await fetch(url);
         const data = await response.json();
+        console.log('data', data)
 
         return data
     };
+
     const [dataSource, setDataSource] = useState();
 
     useEffect(() => {
         fetchTodos(url).then((data) => setDataSource(data));
-        console.log('dataSource', dataSource)
     }, []);
 
     // onSearchNameTextChange = (value) => {
@@ -97,7 +98,7 @@ export default function MainScreen({navigation}) {
                 marginBottom: 50,
                 flex:1,
             }}>
-                <NavBar/>
+                {/*<NavBar/>*/}
                 <View style={{
                     paddingHorizontal: 10,
                     marginRight: 5,
@@ -142,8 +143,7 @@ export default function MainScreen({navigation}) {
         )
 }
 MainScreen.navigationOptions = {
-    headerTitle: false
-
+    headerTitle: 'Users List',
 };
 const styles = StyleSheet.create({
     imageStyle: {

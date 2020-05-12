@@ -40,7 +40,7 @@ export default class DetailScreen extends Component {
 }
 
 DetailScreen.navigationOptions = {
-    headerTitle: 'Users detail list'
+    headerTitle: 'User detail list'
 };
 
 const styles = StyleSheet.create({
