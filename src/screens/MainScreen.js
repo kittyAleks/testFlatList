@@ -3,6 +3,7 @@ import React, {useEffect, useState} from 'react'
 import {View, StatusBar, StyleSheet, Image, Dimensions, TouchableOpacity, Button, FlatList} from 'react-native';
 import { Container, InputGroup, Input, Text, Button as NBButton } from 'native-base';
 import { NavBar } from '../components/NavBar';
+import {PostRow} from '../components/PostRow';
 
 const url = 'https://api.unsplash.com/photos/?client_id=896d4f52c589547b2134bd75ed48742db637fa51810b49b607e37e46ab2c0043';
 
@@ -22,6 +23,9 @@ export default function MainScreen({navigation}) {
         fetchTodos(url).then((data) => setDataSource(data));
     }, []);
 
+    const openDetailPost = item => {
+        navigation.navigate('DetailScreen', {item: item})
+    };
     // onSearchNameTextChange = (value) => {
     //     this.setState({searchText: value});
     //
@@ -36,61 +40,6 @@ export default function MainScreen({navigation}) {
     //         )}
     // };
 
-    const renderItem = (item, sectionID, rowID) => {
-        // const {navigate} = this.props.navigation;
-        return (
-            <View style={{paddingHorizontal: 20,}}>
-                <TouchableOpacity style={{
-                    paddingTop: 10,
-                    borderBottomWidth: 1, borderColor: '#868b9b',
-                }}
-                                  key={rowID}>
-                    <View style={{flexDirection: 'row'}}>
-                        <View>
-                            <TouchableOpacity>
-                                <Image
-                                    source={{uri: `${item.user.profile_image.large}`}}
-                                    style={styles.imageStyle}
-                                />
-                            </TouchableOpacity>
-                        </View>
-
-                        <View style={{flexDirection: 'column', flex: 43, marginLeft: 30, justifyContent: 'center'}}>
-                            <TouchableOpacity>
-                                <Text style={{
-                                    lineHeight: 25,
-                                    color: '#212529',
-                                    fontSize: 18
-                                }}>{item.user.first_name}</Text>
-                                <Text style={{
-                                    color: '#7f7f7f',
-                                    fontSize: 17,
-                                    fontFamily: 'Georgia',
-                                }}>{item.user.last_name}</Text>
-                            </TouchableOpacity>
-                        </View>
-
-                        <View style={{
-                            flex: 25,
-                            alignItems: 'flex-end',
-                            justifyContent: 'center'
-                        }}>
-                            <Button
-                                title='Click' color='#b5b5b5'
-                                onPress={() => {
-                                    navigation.navigate('DetailScreen', {
-                                        first_name: item.user.first_name,
-                                        last_name: item.user.last_name,
-                                        image: item.user.profile_image.large,
-                                    });
-                                }}
-                            />
-                        </View>
-                    </View>
-                </TouchableOpacity>
-            </View>
-        )
-    };
         return (
             <Container style={{
                 backgroundColor: 'white',
@@ -98,7 +47,6 @@ export default function MainScreen({navigation}) {
                 marginBottom: 50,
                 flex:1,
             }}>
-                {/*<NavBar/>*/}
                 <View style={{
                     paddingHorizontal: 10,
                     marginRight: 5,
@@ -119,7 +67,7 @@ export default function MainScreen({navigation}) {
                     <FlatList
                         data={dataSource}
                         keyExtractor={(item, index) => item.id}
-                        renderItem={ (row, sectionID, rowID) => renderItem(row.item, sectionID, rowID) }
+                        renderItem={ ({item}) => <PostRow item={item} onOpen={openDetailPost}/>}
                     />
                 </View>
 
@@ -146,14 +94,6 @@ MainScreen.navigationOptions = {
     headerTitle: 'Users List',
 };
 const styles = StyleSheet.create({
-    imageStyle: {
-        width: 80,
-        height: 80,
-        borderRadius: 80/ 2,
-        marginBottom: 10,
-        borderWidth: 1,
-        borderColor: '#fff',
-    },
     inputStyle: {
         borderWidth: 1,
         paddingLeft: 10,
@@ -162,6 +102,7 @@ const styles = StyleSheet.create({
         borderColor: '#c9c9c9',
         height: 40,
     }
+
 });
 
 

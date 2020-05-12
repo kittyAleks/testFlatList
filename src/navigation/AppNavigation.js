@@ -4,7 +4,7 @@ import { createStackNavigator } from 'react-navigation-stack'
 import { Platform } from 'react-native'
 
 import MainScreen from "../screens/MainScreen"
-import DetailScreen from "../screens/DetailScreen"
+import {DetailScreen} from "../screens/DetailScreen"
 import {THEME} from '../theme'
 
 const AppNavigator = createStackNavigator({

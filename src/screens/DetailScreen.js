@@ -1,42 +1,25 @@
 import React, {Component, useState, useCallback} from 'react';
 import {StyleSheet, View, Text, Image, Button} from 'react-native';
 
-export default class DetailScreen extends Component {
+export const DetailScreen = ({navigation}) => {
+    const item = navigation.getParam('item');
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            modalVisible: false
-        };
-    }
-
-    render() {
-        const nav = this.props.navigation.state.params;
-        return (
-            <View style={styles.detailContainer}>
+    return (
+        <View style={styles.detailContainer}>
             <View style={{fontSize: 30}}>
-                <Text style={{fontSize: 20}}>{nav.first_name}{' '}{nav.last_name}</Text>
+                <Text style={{fontSize: 20}}>{item.user.first_name}{' '}{item.user.last_name}</Text>
             </View>
             <View style={{paddingTop: 20}}>
                 <Image
-                    source={{uri: `${nav.image}`}}
-                    style={{
-                        width: 350,
-                        height: 350,
-                        borderRadius: 20,
-                        marginBottom: 15,
-                        borderWidth: 1,
-                        borderColor: '#fff'}}
+                    source={{uri: `${item.user.profile_image.large}`}}
+                    style={styles.imageStyle}
                 />
             </View>
-            <View>
-                <Button title='Go back' color={'#7e7e7e'}
-                        onPress={() => this.props.navigation.goBack()}
-                />
-            </View>
+            <Button title='Go back' color={'#7e7e7e'}
+                    onPress={() => navigation.navigate('MainScreen')}
+            />
         </View>
-        );
-    }
+    );
 }
 
 DetailScreen.navigationOptions = {
@@ -49,5 +32,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingTop: 40
+    },
+    imageStyle: {
+        width: 350,
+        height: 350,
+        borderRadius: 20,
+        marginBottom: 15,
+        borderWidth: 1,
+        borderColor: '#fff'
     }
 });
